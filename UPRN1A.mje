@@ -1,0 +1,3 @@
+%YDB-E-NULSUBSC, DB access failed because Null subscripts are not allowed for current region,%YDB-I-GVIS, 		Global variable: ^UPRNS("SAINT","")
+		At M source location IMPSAINT+26^UPRN1A
+%YDB-W-NOTPRINCIO, Output currently directed to device /tmp/uprnupload/Saints.txt
