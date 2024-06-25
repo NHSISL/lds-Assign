@@ -180,16 +180,6 @@ f156 ;
 	. s adbuild=""
 	d fixfbns(adflat,.adbuild,adbno,.adstreet)
 	;	
-	w !,"post UPRNA1 - f156 : ",!
-	w "Adflat:"_adflat,!
-	w "adbno:"_adbno,!
-	w "adbuild:"_adbuild,!
-	w "adstreet:"_adstreet,!
-	w "adepth:"_adepth,!
-	w "adeploc:"_adeploc,!
-	w "adloc:"_adloc,!
-	w "adtown:"_adtown,!
-	w "post:"_post,!
 	;	
 	q
 fixfbns(adflat,adbuild,adbno,adstreet)	;

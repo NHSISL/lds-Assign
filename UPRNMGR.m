@@ -50,7 +50,6 @@ GETUPRN(adrec,qpost,orgpost,country,summary,writejson,noassert) ;Returns the res
 	;qpost IS deprecated
 	;country is deprecated
 	;orgpost is the post code of a local organisatoin to narrow down search
-	w !,"GET: ",adrec
 	k ^TUPRN($J)
 	s writejson=+$g(writejson)
 	;	
@@ -59,7 +58,6 @@ GETUPRN(adrec,qpost,orgpost,country,summary,writejson,noassert) ;Returns the res
 	S zuprn=""
 	S:asserted'="" zuprn=$get(^ZASSERT(asserted))
 	; HOOK2 is set in UPRNHOOK2.m
-	w !,asserted
 	I 'noassert,zuprn'="" do  quit:$g(HOOK2)
 	. S oadrec=$get(^ZASSERT(asserted,"O"))
 	. w !,oadrec
@@ -75,22 +73,17 @@ GETUPRN(adrec,qpost,orgpost,country,summary,writejson,noassert) ;Returns the res
 	. quit
 	;	
 	s adrec=$tr(adrec,",","~")
-	w !,adrec
 trailing  ;Strips off trailing nulls
 	f i=$l(adrec,"~"):-1:1 q:$p(adrec,"~",i)'=""
 etrail s adrec=$p(adrec,"~",1,i)
-	w !,"Strip Trailing Nulls:",adrec
 	s adrec=$tr(adrec,"""")
 	s adrec=$tr(adrec,$c(13))
 	s adrec=$tr(adrec,$c(10))
-	w !,"Further Cleaning quote, new line, cr:",adrec
 	s summary=$g(summary)
-	w !,"Summary",summary
 	;Checks for library update
 	I '$D(^UPRNS("DROPSUFFIX")) D SETSWAPS^UPRNU
 	;Checks quality of address
 	D ADRQUAL^UPRN(.adrec)
-	W !,"QUALITY",adrec
 	I '$D(^TUPRN($J,"INVALID")) D
 	. D MATCHONE^UPRN(adrec,$g(orgpost))
 	E  D
@@ -104,7 +97,7 @@ FULL ;Full output
 	s json=json_"}"
 	w:writejson json
 	set ^temp($j,1)=json
-	w !,"OUT",json
+	w !,"OUTPUT: ",!,json
 	q
 SUMMARY ;Summary result
 	s json="{"
@@ -181,7 +174,6 @@ MATCHED(best,commerce)  ;Matches either commercial or residential
 	s json=json_"}"
 	q
 PATTERN(matchrec,json)       ;
-	w !,"PATTERN",matchrec
 	n i,part,degree,pattern
 	s json=json_"""Match_pattern"":{"
 	f i=1:1:$l(matchrec,",") d

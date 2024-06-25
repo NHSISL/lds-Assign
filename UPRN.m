@@ -210,17 +210,6 @@ MATCHONE(adrec,orgpost,ui)    ;matches one address
 	n adeploc,original,try,reformed
 	d format^UPRNA(adrec,.address)
 	;	
-	w !,"after format: ",adrec,!
-	w "Adflat:"_adflat,!
-	w "adbno:"_adbno,!
-	w "adbuild:"_adbuild,!
-	w "adstreet:"_adstreet,!
-	w "adepth:"_adepth,!
-	w "adeploc:"_adeploc,!
-	w "adloc:"_adloc,!
-	w "adtown:"_adtown,!
-	w "post:"_post,!
-	;	
 	I $D(^TUPRN($J,"INVALID")) Q
 	s INBRACKET=$g(address("bracketed"))
 	;
@@ -247,10 +236,7 @@ MATCHONE(adrec,orgpost,ui)    ;matches one address
 	;	
 try1 D match(original,adflat,adbuild,adbno,adepth,adstreet,adeploc,adloc,adpost,adf2,adb2,adtown)
 	;	
-	w !,"match",",",original,",",adflat,",",adbuild,",",adbno,",",adepth,",",adstreet,",",adeploc,",",adloc,",",adpost,",",adf2,",",adb2,",",adtown
 	s try=1
-	w !,"t1:",^TUPRN($J,"MATCHED")
-	w !,"j:",$j
 	i $D(^TUPRN($J,"MATCHED"))  D  Q
 	. d matched
 	e  i $D(^TCUPRN($J,"MATCHED")) D
@@ -293,12 +279,10 @@ match(original,adflat,adbuild,adbno,adepth,adstreet,adeploc,adloc,adpost,adf2,ad
 	i adpstreet'=adstreet s adplural=1
 	if adpbuild'=adbuild s adplural=1
 	s indrec=adpost_" "_adflat_" "_adbuild_" "_adbno_" "_adepth_" "_adstreet_" "_adeploc_" "_adloc
-	w !,"indrec=",indrec,!
 	;	
 	for  q:(indrec'["  ")  s indrec=$$tr^UPRNL(indrec,"  "," ")
 	s indrec=$$lt^UPRNL(indrec)
 	;	
-	w !,"indrec=",indrec,!
 	i adplural d
 	. s indprec=adpost_" "_adflat_" "_adpbuild_" "_adbno_" "_adepth_" "_adpstreet_" "_adeploc_" "_adloc
 	. for  q:(indprec'["  ")  s indprec=$$tr^UPRNL(indprec,"  "," ")
@@ -317,17 +301,14 @@ match(original,adflat,adbuild,adbno,adepth,adstreet,adeploc,adloc,adpost,adf2,ad
 	;	
 	;Full match on post,street, building and flat
 	;Try concatenated fields
-	w !,"Match All - indrec:",indrec
 1 s matches=$$matchall(indrec)
 	I $D(^TUPRN($J,"MATCHED")) Q
-	w !,"Match All - original";
 	s matches=$$matchall(original)
 	I $D(^TUPRN($J,"MATCHED")) Q
 	;	
 	;	
 	;Exact field match single and plural and correction
 10 S ALG="10-"
-	w !,"Match 10"
 	s matchrec="Pe,Se,Ne,Be,Fe"
 	s matches=$$match1(adpost,adstreet,adbno,adbuild,adflat,matchrec)
 	i $d(^TUPRN($J,"MATCHED")) Q
@@ -456,13 +437,11 @@ match(original,adflat,adbuild,adbno,adepth,adstreet,adeploc,adloc,adpost,adf2,ad
 	;	
 	;Matches post code street and number, try fuzzy building/ flat       
 130 s ALG="130-"
-	w !,"Match 130"
 	s matches=$$match2(adpost,adstreet,adbno,adbuild,adflat,adloc)
 	i $D(^TUPRN($J,"MATCHED")) Q
 	;	
 131 ;Closish post code, exact flat, number street and near enough building
 	S ALG="131-"
-	w !,"Match 131"
 	s matches=$$match203(adpost,adstreet,adbno,adbuild,adflat)
 	i $D(^TUPRN($J,"MATCHED")) Q
 	;	
@@ -2896,7 +2875,6 @@ matched ;
 	. D sort(1)
 	d setalg(1)
 	I $g(^TUPRN($J,"MATCHED"))>1 d
-	. w !,"Residential match>1"
 	. D sort(0)
 	d setalg(0)
 	q
@@ -2912,10 +2890,8 @@ remcom ;removes duplicate commercial match
 	Q
 	q
 setalg(commerce)   ;
-	w !,"setalg"
 	n glob
 	s glob=$s(commerce:"^TCUPRN",1:"^TUPRN")
-	w !,glob
 	I '$d(@glob@($j)) q
 	S uprn=""
 	for  s uprn=$O(@glob@($J,"MATCHED",uprn)) q:uprn=""  d
@@ -3062,17 +3038,14 @@ setuprns(index,n1,n2,n3,n4,n5)
 set(uprn,table,key) ;
 	n status,xuprn
 	s status=$p(^UPRN("U",uprn),"~",3)
-	w !,"status",status
 	s class=$G(^UPRN("CLASS",uprn))
 	i class="" q ""
 	S reside=$G(^UPRN("CLASSIFICATION",class,"residential"))
-	w !,"reside: ",reside
 	i reside="N" q 0
 	I reside="E",matchrec'="Pe,Se,Ne,Be,Fe" q 0
 	i reside="Y" s reside=1
 	I status=8,'reside q 0
 	i status<8,$D(^TUPRN($J,"STATUS",8)) d
-	. w !,"clearing"
 	. s xuprn=""
 	. for  s xuprn=$O(^TUPRN($J,"STATUS",8,xuprn)) q:xuprn=""  d
 	. . i $Dif(^TUPRN($J,"MATCHED",xuprn)) d
@@ -3086,10 +3059,8 @@ set(uprn,table,key) ;
 	. . . I ^TCUPRN($J,"MATCHED")=0 D
 	. . . . K ^TCUPRN($J,"MATCHED")
 	. k ^TUPRN($J,"STATUS",8)
-	w !,"setting"," ",status," ",uprn," ",reside," ",table," ",key
 	S ^TUPRN($J,"STATUS",status,uprn)=""
 	i reside d  q 1
-	. w !,"UPRN L3088"
 	. I status=8,$O(^TUPRN($J,"MATCHED",""))'="" Q
 	. I $D(^TUPRN($J,"MATCHED",uprn,table,key)) q
 	. I '$D(^TUPRN($J,"MATCHED",uprn)) d
@@ -3097,7 +3068,6 @@ set(uprn,table,key) ;
 	. s ^TUPRN($J,"MATCHED",uprn,table,key)=matchrec
 	. S ^TUPRN($J,"MATCHED",uprn,table,key,"A")=ALG
 	e  d  q 0
-	. w !,"UPRN L3096"
 	. i matchrec["Fc"!(matchrec["Nc")!(matchrec["Fd") q
 	. I status=8,$O(^TCUPRN($J,"MATCHED",""))'="" Q
 	. I $D(^TCUPRN($J,"MATCHED",uprn,table,key)) q

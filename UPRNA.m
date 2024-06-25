@@ -203,16 +203,6 @@ f16 f var="adflat","adbuild","adstreet","adepth","adeploc","adloc","adtown" d
 	. for  q:(@var'["  ")   d
 	. . s @var=$$tr^UPRNL(@var,"  "," ")
 	;	
-	w !,"post f16: ",!
-	w "Adflat:"_adflat,!
-	w "adbno:"_adbno,!
-	w "adbuild:"_adbuild,!
-	w "adstreet:"_adstreet,!
-	w "adepth:"_adepth,!
-	w "adeploc:"_adeploc,!
-	w "adloc:"_adloc,!
-	w "adtown:"_adtown,!
-	w "post:"_post,!
 04021 ;
 	set address("original")=$$tr^UPRNL($$lt^UPRNL(post_" "_$$flat^UPRNU(adflat)_" "_$$flat^UPRNU(adbuild)_" "_adepth_" "_adstreet_" "_adeploc),"  "," ")
 	;	
@@ -845,17 +835,6 @@ f153 ;Building is complex street and flat
 	. s adflat=$p(adbuild,adbuild*1,2)
 	. s adbuild=""
 	;	
-	;	
-	w !,"post f153: ",!
-	w "Adflat:"_adflat,!
-	w "adbno:"_adbno,!
-	w "adbuild:"_adbuild,!
-	w "adstreet:"_adstreet,!
-	w "adepth:"_adepth,!
-	w "adeploc:"_adeploc,!
-	w "adloc:"_adloc,!
-	w "adtown:"_adtown,!
-	w "post:"_post,!
 	;	
 	;
 	D ^UPRNA1(.adflat,.adbuild,.adbno,.adstreet,.adloc,.adeploc,.adtown,.adepth)
